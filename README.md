@@ -12,7 +12,7 @@ As this is my first time using C#, and I'm not a professional programmer, this i
 
 Usage:
 ======
-Download and extract a zip file from the bin folder. Run the .exe file.
+Download and extract a zip file from the "CopyListFiles/WinFormsApp2/bin/Release/" folder. Run the .exe file.
 
 1) Select the folder to copy from by clicking the FROM button and selecting the folder with dialog that opens, or type it into the text box.
 2) Select the folder to copy to by clicking the FROM button and selecting the folder with dialog that opens, or type it into the text box.
