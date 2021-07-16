@@ -61,6 +61,10 @@ namespace WinFormsApp2
 
         private void copy_Files(bool replaceFiles)
         {
+            var failures = new List<string>();
+            int warnings = 0;
+            int success = 0;
+
             // copy files from list
             foreach (string f in txtbox_FileList.Lines)
             {
@@ -69,6 +73,9 @@ namespace WinFormsApp2
                 // stop if exit button was clicked
                 if (cancel_clicked)
                     break;
+
+                if (f.Replace(" ", "").Length == 0)
+                    continue;
 
                 // Use Path class to manipulate file and directory paths.
                 string sourceFile = System.IO.Path.Combine(txtbox_Source.Text, f);
@@ -87,30 +94,44 @@ namespace WinFormsApp2
                     if (!destFileExists || replaceFiles)
                     {
                         if (destFileExists)
-                            UpdateTextBox("Replacing existing file...");
+                            UpdateTextBox("INFO: Replacing existing file...");
 
                         try
                         {
                             // Copy the file
                             System.IO.File.Copy(sourceFile, destFile, replaceFiles);
                             UpdateTextBox("SUCCESS!\r\n");
+                            success++;
                         }
                         catch (System.IO.IOException exception)
                         {
                             UpdateTextBox("FAIL!\r\n" + exception.Message + "\r\n");
+                            failures.Add("Copy Failed: \r\n\tSource:\t" + sourceFile + "\r\n\tDest: \t" + destFile);
                         }
                     }
                     else
                     {
                         UpdateTextBox("WARNING: File already exists!\r\n");
+                        warnings++;
                     }
                 }
                 else
                 {
-                    UpdateTextBox("WARNING: Source file missing!\r\n");
+                    UpdateTextBox("FAILED: Source file missing!\r\n");
+                    failures.Add("Source missing: \t"+ sourceFile);
                 }
                 UpdateTextBox("------------\r\n");
-            }                   
+            }
+
+            if (failures.Count > 0)
+            {
+                UpdateTextBox("\r\nFAILED:\r\n---------------------------------\r\n");
+                foreach (var fail in failures)
+                {
+                    UpdateTextBox(fail+ "\r\n");
+                }
+            }
+            UpdateTextBox(String.Format("\r\n====== SUMMARY ======\r\nCopied:\t{0}\r\nFailed: \t{1}\r\nWarnings:\t{2}\r\n", success, failures.Count,  warnings));
         }
 
         public void UpdateTextBox(string value)
@@ -181,14 +202,14 @@ namespace WinFormsApp2
                 }
                 else
                 {
-                    txtbox_output.AppendText("WARNING: \tFOLDER CHECK FAILED! \r\n");
+                    txtbox_output.AppendText("FAILED: \tFOLDER CHECK FAILED! \r\n");
                     txtbox_output.AppendText("------------\r\n");
                 }
 
             }
             else
             {
-                txtbox_output.AppendText("FAIL: \tMissing at least one input value!\r\n");
+                txtbox_output.AppendText("FAILED: \tMissing at least one input value!\r\n");
                 txtbox_output.AppendText("------------\r\n");
             }
             txtbox_output.AppendText("End: \t"+ DateTime.Now.ToString("u") + "\r\n");
