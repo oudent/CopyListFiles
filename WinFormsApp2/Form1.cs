@@ -11,8 +11,6 @@ using System.Windows.Forms;
 
 namespace WinFormsApp2
 {
-    
-
     public partial class Form1 : Form
     {
         private readonly SynchronizationContext sychronizationContext;
@@ -100,24 +98,24 @@ namespace WinFormsApp2
                         {
                             // Copy the file
                             System.IO.File.Copy(sourceFile, destFile, replaceFiles);
-                            UpdateTextBox("SUCCESS!\r\n");
+                            UpdateTextBox("SUCCESS!\r\n", Color.Green);
                             success++;
                         }
                         catch (System.IO.IOException exception)
                         {
-                            UpdateTextBox("FAIL!\r\n" + exception.Message + "\r\n");
+                            UpdateTextBox("FAIL!\r\n" + exception.Message + "\r\n", Color.Red);
                             failures.Add("Copy Failed: \r\n\tSource:\t" + sourceFile + "\r\n\tDest: \t" + destFile);
                         }
                     }
                     else
                     {
-                        UpdateTextBox("WARNING: File already exists!\r\n");
+                        UpdateTextBox("WARNING: File already exists!\r\n", Color.Orange);
                         warnings++;
                     }
                 }
                 else
                 {
-                    UpdateTextBox("FAILED: Source file missing!\r\n");
+                    UpdateTextBox("FAILED: Source file missing!\r\n", Color.Red);
                     failures.Add("Source missing: \t"+ sourceFile);
                 }
                 UpdateTextBox("------------\r\n");
@@ -125,22 +123,33 @@ namespace WinFormsApp2
 
             if (failures.Count > 0)
             {
-                UpdateTextBox("\r\nFAILED:\r\n---------------------------------\r\n");
+                UpdateTextBox("\r\n====== ERROR SUMMARY ======\r\n", Color.Red);
                 foreach (var fail in failures)
                 {
-                    UpdateTextBox(fail+ "\r\n");
+                    UpdateTextBox(fail+ "\r\n", Color.Red);
                 }
             }
-            UpdateTextBox(String.Format("\r\n====== SUMMARY ======\r\nCopied:\t{0}\r\nFailed: \t{1}\r\nWarnings:\t{2}\r\n", success, failures.Count,  warnings));
+            UpdateTextBox("\r\n====== SUMMARY ======\r\n");
+            UpdateTextBox(String.Format("Success:\t\t{0}\r\n", success), Color.Green);
+            UpdateTextBox(String.Format("Errors: \t\t{0}\r\n", failures.Count), Color.Red);
+            UpdateTextBox(String.Format("Warnings:\t{0}\r\n", warnings), Color.Orange);
+            UpdateTextBox("------------\r\n");
         }
 
-        public void UpdateTextBox(string value)
+        public void UpdateTextBox(string value, Color? color = null, bool addNewLine = false)
         {
+            
             // allow updating output textbox from a different thread
             sychronizationContext.Post(new SendOrPostCallback(o =>
             {
-                txtbox_output.AppendText(value);
-        }
+                txtbox_output.SuspendLayout();
+                txtbox_output.SelectionColor = color ?? Color.Black;
+                txtbox_output.AppendText(addNewLine
+                    ? $"{value}{Environment.NewLine}"
+                    : value);
+                txtbox_output.ScrollToCaret();
+                txtbox_output.ResumeLayout();
+            }
             ), value);
         }
 
@@ -153,6 +162,17 @@ namespace WinFormsApp2
                 progress_Copy.PerformStep();
             }
             ), i);
+        }
+
+        public void AppendOutput(string value, Color? color = null, bool addNewLine = false)
+        {
+            txtbox_output.SuspendLayout();
+            txtbox_output.SelectionColor = color ?? Color.Black;
+            txtbox_output.AppendText(addNewLine
+                ? $"{value}{Environment.NewLine}"
+                : value);
+            txtbox_output.ScrollToCaret();
+            txtbox_output.ResumeLayout();
         }
 
         private async void btn_CopyFiles_Click(object sender, EventArgs e)
@@ -179,40 +199,77 @@ namespace WinFormsApp2
             btn_GetSourceFolder.Enabled = false;
 
             // Perform some basic checks and start copying files if appropriate
-            txtbox_output.AppendText("Start: \t" + DateTime.Now.ToString("u") + "\r\n");
-            txtbox_output.AppendText("------------\r\n");
+            AppendOutput("Start: \t" + DateTime.Now.ToString("u") + "\r\n");
+            AppendOutput("------------\r\n");
             if ((numLines >= 1) && (txtbox_Source.Text.Length > 0) && (txtbox_Destination.Text.Length > 0))
             {
                 {
-                    txtbox_output.AppendText("Running Initial Folder Checks...\r\n");
-                    txtbox_output.AppendText("FROM: \t" + txtbox_Source.Text + "\r\n");
-                    txtbox_output.AppendText("EXISTS? \t" + System.IO.Directory.Exists(txtbox_Source.Text).ToString() + "\r\n\r\n");
-                    txtbox_output.AppendText("TO: \t" + txtbox_Destination.Text + "\r\n");
-                    txtbox_output.AppendText("EXISTS? \t" + System.IO.Directory.Exists(txtbox_Destination.Text).ToString() + "\r\n\r\n");
-                    txtbox_output.AppendText("Source and Destination Different? \t" + (txtbox_Destination.Text != txtbox_Source.Text).ToString() + "\r\n\r\n");
+                    AppendOutput("Running Initial Folder Checks...\r\n");
+                    
+
+                    if (System.IO.Directory.Exists(txtbox_Source.Text))
+                    {
+                        AppendOutput("   [EXISTS]\t", Color.Green);
+                    }
+                    else
+                    {
+                        AppendOutput("   [MISSING]\t", Color.Red);
+                    }
+                    AppendOutput("FROM: \t" + txtbox_Source.Text + "\r\n");
+
+
+                    if (System.IO.Directory.Exists(txtbox_Destination.Text))
+                    {
+                        AppendOutput("   [EXISTS]\t", Color.Green);
+                    }
+                    else
+                    {
+                        AppendOutput("   [MISSING]\t", Color.Red);
+                    }
+                    AppendOutput("TO: \t" + txtbox_Destination.Text + "\r\n");
+
+                    
+                    if (txtbox_Destination.Text != txtbox_Source.Text)
+                    {
+                        AppendOutput("   [PASS]\t\t", Color.Green);
+                    }
+                    else
+                    {
+                        AppendOutput("   [FAIL]\t\t", Color.Red);
+                    }
+                    AppendOutput("Source and Destination Different?\r\n");
                 }
+                
                 if (System.IO.Directory.Exists(txtbox_Destination.Text) && System.IO.Directory.Exists(txtbox_Source.Text) && (txtbox_Destination.Text != txtbox_Source.Text))
-                {
-                    txtbox_output.AppendText("PASS: \tContinue with copying files... \r\n");
-                    txtbox_output.AppendText("Replace files if exist? \t" + chkbox_Overwrite.Checked.ToString() + "\r\n");
-                    txtbox_output.AppendText("------------\r\n");
+                {                    
+                    AppendOutput("...Continue with copying files...\r\n", Color.Green);
+                    AppendOutput("Replace files if exist?");
+                    if (chkbox_Overwrite.Checked)
+                    {
+                        AppendOutput("   [YES] (risky, no prompts)\r\n", Color.Orange);
+                    }
+                    else
+                    {
+                        AppendOutput("   [NO] (safer)\r\n", Color.Green);
+                    }
+                    AppendOutput("------------\r\n");
 
                     // Launch file copying process in separate thread to prevent blocking GUI function (aka. Allow cancel button functionality)
                     await Task.Run(() => copy_Files(replaceFiles));
                 }
                 else
                 {
-                    txtbox_output.AppendText("FAILED: \tFOLDER CHECK FAILED! \r\n");
-                    txtbox_output.AppendText("------------\r\n");
+                    AppendOutput("...Abort copying files! \r\n", Color.Red);
+                    AppendOutput("------------\r\n");
                 }
 
             }
             else
             {
-                txtbox_output.AppendText("FAILED: \tMissing at least one input value!\r\n");
-                txtbox_output.AppendText("------------\r\n");
+                AppendOutput("ABORTING: \tMissing at least one input value!\r\n", Color.Red);
+                AppendOutput("------------\r\n");
             }
-            txtbox_output.AppendText("End: \t"+ DateTime.Now.ToString("u") + "\r\n");
+            AppendOutput("End: \t"+ DateTime.Now.ToString("u") + "\r\n");
 
             // Update GUI items to normal state
             progress_Copy.Enabled = false;
@@ -239,7 +296,7 @@ namespace WinFormsApp2
             // Handle if user clicks cancel button during copy process
             cancel_clicked = true;
             btn_Cancel.Enabled = false;
-            txtbox_output.AppendText("!!! Cancelling after current file completes !!!");
+            AppendOutput("!!! Cancelling after current file completes !!!", Color.Red);
         }
     }
 }

@@ -38,12 +38,12 @@ namespace WinFormsApp2
             this.label_FileList = new System.Windows.Forms.Label();
             this.txtbox_FileList = new System.Windows.Forms.TextBox();
             this.btn_CopyFiles = new System.Windows.Forms.Button();
-            this.txtbox_output = new System.Windows.Forms.TextBox();
             this.btn_clearList = new System.Windows.Forms.Button();
             this.progress_Copy = new System.Windows.Forms.ProgressBar();
             this.label2 = new System.Windows.Forms.Label();
             this.btn_Cancel = new System.Windows.Forms.Button();
             this.chkbox_Overwrite = new System.Windows.Forms.CheckBox();
+            this.txtbox_output = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // btn_GetSourceFolder
@@ -96,7 +96,7 @@ namespace WinFormsApp2
             this.txtbox_FileList.Multiline = true;
             this.txtbox_FileList.Name = "txtbox_FileList";
             this.txtbox_FileList.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtbox_FileList.Size = new System.Drawing.Size(318, 219);
+            this.txtbox_FileList.Size = new System.Drawing.Size(264, 219);
             this.txtbox_FileList.TabIndex = 5;
             this.txtbox_FileList.WordWrap = false;
             // 
@@ -110,20 +110,9 @@ namespace WinFormsApp2
             this.btn_CopyFiles.UseVisualStyleBackColor = true;
             this.btn_CopyFiles.Click += new System.EventHandler(this.btn_CopyFiles_Click);
             // 
-            // txtbox_output
-            // 
-            this.txtbox_output.Location = new System.Drawing.Point(370, 187);
-            this.txtbox_output.Multiline = true;
-            this.txtbox_output.Name = "txtbox_output";
-            this.txtbox_output.ReadOnly = true;
-            this.txtbox_output.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtbox_output.Size = new System.Drawing.Size(380, 219);
-            this.txtbox_output.TabIndex = 7;
-            this.txtbox_output.WordWrap = false;
-            // 
             // btn_clearList
             // 
-            this.btn_clearList.Location = new System.Drawing.Point(278, 158);
+            this.btn_clearList.Location = new System.Drawing.Point(224, 158);
             this.btn_clearList.Name = "btn_clearList";
             this.btn_clearList.Size = new System.Drawing.Size(75, 23);
             this.btn_clearList.TabIndex = 8;
@@ -134,9 +123,9 @@ namespace WinFormsApp2
             // progress_Copy
             // 
             this.progress_Copy.Enabled = false;
-            this.progress_Copy.Location = new System.Drawing.Point(424, 160);
+            this.progress_Copy.Location = new System.Drawing.Point(359, 158);
             this.progress_Copy.Name = "progress_Copy";
-            this.progress_Copy.Size = new System.Drawing.Size(326, 24);
+            this.progress_Copy.Size = new System.Drawing.Size(391, 24);
             this.progress_Copy.Step = 1;
             this.progress_Copy.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progress_Copy.TabIndex = 9;
@@ -145,7 +134,7 @@ namespace WinFormsApp2
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(370, 169);
+            this.label2.Location = new System.Drawing.Point(305, 166);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(48, 15);
             this.label2.TabIndex = 11;
@@ -172,18 +161,28 @@ namespace WinFormsApp2
             this.chkbox_Overwrite.Text = "Replace files in destination if they exist? (No notifications!)";
             this.chkbox_Overwrite.UseVisualStyleBackColor = true;
             // 
+            // txtbox_output
+            // 
+            this.txtbox_output.Location = new System.Drawing.Point(305, 187);
+            this.txtbox_output.Name = "txtbox_output";
+            this.txtbox_output.ReadOnly = true;
+            this.txtbox_output.Size = new System.Drawing.Size(445, 220);
+            this.txtbox_output.TabIndex = 14;
+            this.txtbox_output.Text = "";
+            this.txtbox_output.WordWrap = false;
+            // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(784, 461);
+            this.Controls.Add(this.txtbox_output);
             this.Controls.Add(this.chkbox_Overwrite);
             this.Controls.Add(this.btn_Cancel);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.progress_Copy);
             this.Controls.Add(this.btn_clearList);
-            this.Controls.Add(this.txtbox_output);
             this.Controls.Add(this.btn_CopyFiles);
             this.Controls.Add(this.txtbox_FileList);
             this.Controls.Add(this.label_FileList);
@@ -191,6 +190,9 @@ namespace WinFormsApp2
             this.Controls.Add(this.btn_GetDestFolder);
             this.Controls.Add(this.txtbox_Source);
             this.Controls.Add(this.btn_GetSourceFolder);
+            this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(800, 500);
+            this.MinimumSize = new System.Drawing.Size(800, 500);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Copy List of Files";
@@ -208,12 +210,12 @@ namespace WinFormsApp2
         private System.Windows.Forms.Label label_FileList;
         private System.Windows.Forms.TextBox txtbox_FileList;
         private System.Windows.Forms.Button btn_CopyFiles;
-        private System.Windows.Forms.TextBox txtbox_output;
         private System.Windows.Forms.Button btn_clearList;
         private System.Windows.Forms.ProgressBar progress_Copy;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btn_Cancel;
         private System.Windows.Forms.CheckBox chkbox_Overwrite;
+        private System.Windows.Forms.RichTextBox txtbox_output;
     }
 }
 
