@@ -72,15 +72,17 @@ namespace WinFormsApp2
                 if (cancel_clicked)
                     break;
 
-                if (f.Replace(" ", "").Length == 0)
+                if (f.Replace(" ", "").Trim().Length == 0)
                     continue;
 
                 // Use Path class to manipulate file and directory paths.
-                string sourceFile = System.IO.Path.Combine(txtbox_Source.Text, f);
-                string destFile = System.IO.Path.Combine(txtbox_Destination.Text, f);
+                // slightly redundant, but pulls inputs directly from GUI rather than passed as params. Risky?
+                string sourceFile = System.IO.Path.Combine(txtbox_Source.Text.Trim(), f.Trim());
+                string destFile = System.IO.Path.Combine(txtbox_Destination.Text.Trim(), f.Trim());
 
                 UpdateTextBox("FROM: \t");
                 UpdateTextBox(sourceFile + "\r\n");
+
                 // If source file exists, then continue process
                 if (System.IO.File.Exists(sourceFile))
                 {
@@ -177,6 +179,9 @@ namespace WinFormsApp2
 
         private async void btn_CopyFiles_Click(object sender, EventArgs e)
         {
+            // Runs once Copy button is clicked.
+            // does some initial checks of user inputs that triggers async file copy function
+
             int numLines = txtbox_FileList.Lines.Length;
             txtbox_output.Clear();
             cancel_clicked = false;
@@ -198,49 +203,55 @@ namespace WinFormsApp2
             btn_GetDestFolder.Enabled = false;
             btn_GetSourceFolder.Enabled = false;
 
+            string sourceFolder = txtbox_Source.Text.Trim();
+            string destFolder = txtbox_Destination.Text.Trim();
+            bool abort_copy = false;
+
             // Perform some basic checks and start copying files if appropriate
             AppendOutput("Start: \t" + DateTime.Now.ToString("u") + "\r\n");
             AppendOutput("------------\r\n");
-            if ((numLines >= 1) && (txtbox_Source.Text.Length > 0) && (txtbox_Destination.Text.Length > 0))
-            {
-                {
-                    AppendOutput("Running Initial Folder Checks...\r\n");
-                    
-
-                    if (System.IO.Directory.Exists(txtbox_Source.Text))
-                    {
-                        AppendOutput("   [EXISTS]\t", Color.Green);
-                    }
-                    else
-                    {
-                        AppendOutput("   [MISSING]\t", Color.Red);
-                    }
-                    AppendOutput("FROM: \t" + txtbox_Source.Text + "\r\n");
-
-
-                    if (System.IO.Directory.Exists(txtbox_Destination.Text))
-                    {
-                        AppendOutput("   [EXISTS]\t", Color.Green);
-                    }
-                    else
-                    {
-                        AppendOutput("   [MISSING]\t", Color.Red);
-                    }
-                    AppendOutput("TO: \t" + txtbox_Destination.Text + "\r\n");
-
-                    
-                    if (txtbox_Destination.Text != txtbox_Source.Text)
-                    {
-                        AppendOutput("   [PASS]\t\t", Color.Green);
-                    }
-                    else
-                    {
-                        AppendOutput("   [FAIL]\t\t", Color.Red);
-                    }
-                    AppendOutput("Source and Destination Different?\r\n");
-                }
+            if ((numLines >= 1) && (sourceFolder.Length > 0) && (destFolder.Length > 0))
+            {                
+                AppendOutput("Running Initial Folder Checks...\r\n");
                 
-                if (System.IO.Directory.Exists(txtbox_Destination.Text) && System.IO.Directory.Exists(txtbox_Source.Text) && (txtbox_Destination.Text != txtbox_Source.Text))
+                // Check sourceFolder exists
+                if (System.IO.Directory.Exists(sourceFolder))
+                {
+                    AppendOutput("   [EXISTS]\t", Color.Green);
+                }
+                else
+                {
+                    AppendOutput("   [MISSING]\t", Color.Red);
+                    abort_copy = true;
+                }
+                AppendOutput("FROM: \t" + sourceFolder + "\r\n");
+
+                // Check destFolder exists
+                if (System.IO.Directory.Exists(destFolder))
+                {
+                    AppendOutput("   [EXISTS]\t", Color.Green);
+                }
+                else
+                {
+                    AppendOutput("   [MISSING]\t", Color.Red);
+                    abort_copy = true;
+                }
+                AppendOutput("TO: \t" + destFolder + "\r\n");
+
+                //check source and dest folders are different folders
+                if (destFolder != sourceFolder)
+                {
+                    AppendOutput("   [PASS]\t\t", Color.Green);
+                }
+                else
+                {
+                    AppendOutput("   [FAIL]\t\t", Color.Red);
+                    abort_copy = true;
+                }
+                AppendOutput("Source and Destination Different?\r\n");
+                
+                // If all checks above passed, continue copying, otherwise stop
+                if (!abort_copy)
                 {                    
                     AppendOutput("...Continue with copying files...\r\n", Color.Green);
                     AppendOutput("Replace files if exist?");

@@ -4,6 +4,27 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
+    <StartupObject>WinFormsApp2.Program</StartupObject>
+    <Version>1.6.0</Version>
+    <PackageIcon>favicon.ico</PackageIcon>
+    <PackageIconUrl />
+    <SignAssembly>false</SignAssembly>
+    <DelaySign>false</DelaySign>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/oudent/CopyListFiles</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/oudent/CopyListFiles</RepositoryUrl>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="favicon.ico">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>

@@ -31,6 +31,7 @@ namespace WinFormsApp2
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.btn_GetSourceFolder = new System.Windows.Forms.Button();
             this.txtbox_Source = new System.Windows.Forms.TextBox();
             this.btn_GetDestFolder = new System.Windows.Forms.Button();
@@ -190,6 +191,7 @@ namespace WinFormsApp2
             this.Controls.Add(this.btn_GetDestFolder);
             this.Controls.Add(this.txtbox_Source);
             this.Controls.Add(this.btn_GetSourceFolder);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(800, 500);
             this.MinimumSize = new System.Drawing.Size(800, 500);
